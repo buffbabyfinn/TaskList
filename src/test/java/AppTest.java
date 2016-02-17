@@ -28,6 +28,7 @@ public class AppTest extends FluentTest {
   @Test
   public void taskIsCreatedTest() {
     goTo("http://localhost:4567/");
+    click("a", withText("Add a new task"));
     fill("#description").with("Mow the lawn");
     submit(".btn");
     assertThat(pageSource()).contains("Your task has been saved.");
@@ -35,23 +36,41 @@ public class AppTest extends FluentTest {
 
   @Test
   public void taskIsDisplayedTest() {
-    goTo("http://localhost:4567/");
+    goTo("http://localhost:4567/tasks/new");
     fill("#description").with("Mow the lawn");
     submit(".btn");
-    click("a", withText("Go Back"));
+    click("a", withText("View all tasks"));
     assertThat(pageSource()).contains("Mow the lawn");
   }
 
   @Test
   public void multipleTasksAreDisplayedTest() {
-    goTo("http://localhost:4567/");
+    goTo("http://localhost:4567/tasks/new");
     fill("#description").with("Mow the lawn");
     submit(".btn");
-    click("a", withText("Go Back"));
+    goTo("http://localhost:4567/tasks/new");
     fill("#description").with("Buy groceries");
     submit(".btn");
-    click("a", withText("Go Back"));
+    click("a", withText("View all tasks"));
     assertThat(pageSource()).contains("Mow the lawn");
     assertThat(pageSource()).contains("Buy groceries");
   }
+
+  @Test
+  public void taskShowPageDisplaysDescription() {
+    goTo("http://localhost:4567/tasks/new");
+    fill("#description").with("Mow the lawn");
+    submit(".btn");
+    click("a", withText("View all tasks"));
+    click("a", withText("Mow the lawn"));
+    assertThat(pageSource()).contains("Mow the lawn");
+  }
+
+  @Test
+  public void taskNotFoundMessageShown() {
+  goTo("http://localhost:4567/tasks/999");
+  assertThat(pageSource()).contains("Task not found");
+}
+
+
 }
